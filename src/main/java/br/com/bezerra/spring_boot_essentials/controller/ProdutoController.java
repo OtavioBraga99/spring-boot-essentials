@@ -34,9 +34,14 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Optional<ProdutoEntity> findById(@PathVariable Integer id){
-        return produtoService.findById(id);
+    public ResponseEntity<ProdutoEntity> findById(@PathVariable Integer id){
+
+        Optional<ProdutoEntity> produto = produtoService.findById(id);
+        if (produto.isPresent()){
+            return ResponseEntity.ok(produto.get());
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
 
