@@ -30,4 +30,7 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
+    public void deleteById(Integer id){
+        produtoRepository.deleteById(id);
+    }
 }
