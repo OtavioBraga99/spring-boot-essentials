@@ -57,5 +57,25 @@ public class ProdutoController {
         return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/{id}")
+        public ResponseEntity<ProdutoEntity> atualizar(
+                @PathVariable Integer id,
+                @RequestBody ProdutoEntity produtoAtualizado
+    ){
+
+        Optional<ProdutoEntity> produtoExistente = produtoService.findById(id);
+
+        if (produtoExistente.isPresent()){
+
+            ProdutoEntity produto = produtoService.atualizar(
+                    produtoExistente.get(),
+                    produtoAtualizado
+            );
+
+            return ResponseEntity.ok(produto);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
 
