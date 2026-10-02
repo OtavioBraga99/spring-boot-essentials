@@ -2,6 +2,9 @@ package br.com.bezerra.spring_boot_essentials.controller;
 
 import br.com.bezerra.spring_boot_essentials.database.model.ProdutoEntity;
 import br.com.bezerra.spring_boot_essentials.database.repository.ProdutoRepository;
+import br.com.bezerra.spring_boot_essentials.dto.ProdutoRequestDTO;
+import br.com.bezerra.spring_boot_essentials.dto.ProdutoResponseDTO;
+import br.com.bezerra.spring_boot_essentials.mapper.ProdutoMapper;
 import br.com.bezerra.spring_boot_essentials.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,28 +20,51 @@ public class ProdutoController {
 
     private final ProdutoService produtoService;
 
-    public ProdutoController(ProdutoService produtoService) {
+    public final ProdutoMapper produtoMapper;
+
+    public ProdutoController(ProdutoService produtoService,
+                             ProdutoMapper produtoMapper) {
+
         this.produtoService = produtoService;
+        this.produtoMapper = produtoMapper;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProdutoEntity salvar(@RequestBody ProdutoEntity produto) {
-        return produtoService.salvar(produto);
+    public ProdutoResponseDTO salvar(
+            @RequestBody ProdutoRequestDTO produtoDTO) {
+
+        ProdutoEntity produto =
+                produtoMapper.toEntity(produtoDTO);
+
+        ProdutoEntity produtoSalvo =
+                produtoService.salvar(produto);
+
+        return produtoMapper.toResponseDTO(produtoSalvo);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProdutoEntity> findAll(){
-        return produtoService.findAll();
+    public List<ProdutoResponseDTO> findAll(){
+
+        List<ProdutoEntity> produtos =
+                produtoService.findAll();
+
+        return produtos.stream()
+                .map(produtoMapper::toResponseDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoEntity> findById(@PathVariable Integer id){
+    public ResponseEntity<ProdutoResponseDTO> findById(@PathVariable Integer id){
 
         Optional<ProdutoEntity> produto = produtoService.findById(id);
         if (produto.isPresent()){
-            return ResponseEntity.ok(produto.get());
+
+            ProdutoResponseDTO response =
+                    produtoMapper.toResponseDTO(produto.get());
+
+            return ResponseEntity.ok(response);
         }
 
         return ResponseEntity.notFound().build();
@@ -58,21 +84,29 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-        public ResponseEntity<ProdutoEntity> atualizar(
+        public ResponseEntity<ProdutoResponseDTO> atualizar(
                 @PathVariable Integer id,
-                @RequestBody ProdutoEntity produtoAtualizado
-    ){
+                @RequestBody ProdutoRequestDTO produtoDTO) {
 
-        Optional<ProdutoEntity> produtoExistente = produtoService.findById(id);
+        Optional<ProdutoEntity> produtoExistente =
+                produtoService.findById(id);
 
         if (produtoExistente.isPresent()){
 
-            ProdutoEntity produto = produtoService.atualizar(
-                    produtoExistente.get(),
-                    produtoAtualizado
-            );
+            ProdutoEntity novosDados =
+                    produtoMapper.toEntity(produtoDTO);
 
-            return ResponseEntity.ok(produto);
+            ProdutoEntity produtoAtualizado =
+                    produtoService.atualizar(
+                            produtoExistente.get(),
+                            novosDados
+                    );
+
+            ProdutoResponseDTO response =
+                    produtoMapper.toResponseDTO(produtoAtualizado);
+
+            return ResponseEntity.ok(response);
+
         }
 
         return ResponseEntity.notFound().build();
