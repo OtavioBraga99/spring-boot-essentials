@@ -6,6 +6,7 @@ import br.com.bezerra.spring_boot_essentials.dto.ProdutoRequestDTO;
 import br.com.bezerra.spring_boot_essentials.dto.ProdutoResponseDTO;
 import br.com.bezerra.spring_boot_essentials.mapper.ProdutoMapper;
 import br.com.bezerra.spring_boot_essentials.service.ProdutoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ProdutoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoResponseDTO salvar(
-            @RequestBody ProdutoRequestDTO produtoDTO) {
+            @Valid @RequestBody ProdutoRequestDTO produtoDTO) {
 
         ProdutoEntity produto =
                 produtoMapper.toEntity(produtoDTO);
@@ -86,7 +87,7 @@ public class ProdutoController {
     @PutMapping("/{id}")
         public ResponseEntity<ProdutoResponseDTO> atualizar(
                 @PathVariable Integer id,
-                @RequestBody ProdutoRequestDTO produtoDTO) {
+                @Valid @RequestBody ProdutoRequestDTO produtoDTO) {
 
         Optional<ProdutoEntity> produtoExistente =
                 produtoService.findById(id);
