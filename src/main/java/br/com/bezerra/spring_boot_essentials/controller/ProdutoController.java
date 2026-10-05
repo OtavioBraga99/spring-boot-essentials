@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -74,6 +75,19 @@ public class ProdutoController {
 
         List<ProdutoEntity> produtos =
                 produtoService.buscarPorNome(nome);
+
+        return produtos.stream()
+                .map(produtoMapper::toResponseDTO)
+                .toList();
+    }
+
+    @GetMapping("/precos")
+    public List<ProdutoResponseDTO> buscarPorFaixaDePreco(
+            @RequestParam BigDecimal min,
+            @RequestParam BigDecimal max) {
+
+        List<ProdutoEntity> produtos =
+                produtoService.buscarPorFaixaDePreco(min, max);
 
         return produtos.stream()
                 .map(produtoMapper::toResponseDTO)

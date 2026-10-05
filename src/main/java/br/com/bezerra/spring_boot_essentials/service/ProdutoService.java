@@ -6,6 +6,7 @@ import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoExce
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,15 +20,15 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
-    public ProdutoEntity salvar(ProdutoEntity produto){
+    public ProdutoEntity salvar(ProdutoEntity produto) {
         return produtoRepository.save(produto);
     }
 
-    public List<ProdutoEntity> findAll(){
+    public List<ProdutoEntity> findAll() {
         return produtoRepository.findAll();
     }
 
-    public ProdutoEntity findById(Integer id){
+    public ProdutoEntity findById(Integer id) {
 
         return produtoRepository.findById(id)
                 .orElseThrow(() ->
@@ -35,7 +36,7 @@ public class ProdutoService {
                 );
     }
 
-    public void deleteById(Integer id){
+    public void deleteById(Integer id) {
         produtoRepository.deleteById(id);
     }
 
@@ -50,7 +51,20 @@ public class ProdutoService {
         return produtoRepository.save(produtoExistente);
     }
 
-    public List<ProdutoEntity> buscarPorNome(String nome){
+    public List<ProdutoEntity> buscarPorNome(String nome) {
         return produtoRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    public List<ProdutoEntity> buscarPorFaixaDePreco(
+            BigDecimal min,
+            BigDecimal max) {
+
+        if (min.compareTo(max) > 0){
+            throw new IllegalArgumentException(
+                    "O preço mínimo não pode ser maior que o máximo"
+            );
+        }
+
+        return produtoRepository.findByPrecoBetween(min, max);
     }
 }

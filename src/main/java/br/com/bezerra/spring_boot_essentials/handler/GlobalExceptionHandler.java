@@ -46,4 +46,17 @@ public class GlobalExceptionHandler {
                 .body(erro);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarArgumentoInvalido(
+            IllegalArgumentException exception){
+
+        Map<String, String> erro = new HashMap<>();
+
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erro);
+
+    }
 }
