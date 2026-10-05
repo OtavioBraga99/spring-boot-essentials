@@ -68,6 +68,18 @@ public class ProdutoController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/buscar")
+    public List<ProdutoResponseDTO> buscarPorNome(
+            @RequestParam String nome){
+
+        List<ProdutoEntity> produtos =
+                produtoService.buscarPorNome(nome);
+
+        return produtos.stream()
+                .map(produtoMapper::toResponseDTO)
+                .toList();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> atualizar(
             @PathVariable Integer id,
