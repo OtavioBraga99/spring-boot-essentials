@@ -2,6 +2,7 @@ package br.com.bezerra.spring_boot_essentials.service;
 
 import br.com.bezerra.spring_boot_essentials.database.model.ProdutoEntity;
 import br.com.bezerra.spring_boot_essentials.database.repository.ProdutoRepository;
+import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +27,12 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
-    public Optional<ProdutoEntity> findById(Integer id){
-        return produtoRepository.findById(id);
+    public ProdutoEntity findById(Integer id){
+
+        return produtoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProdutoNaoEncontradoException(id)
+                );
     }
 
     public void deleteById(Integer id){

@@ -1,5 +1,6 @@
 package br.com.bezerra.spring_boot_essentials.handler;
 
+import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,9 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExecptionHandler {
+public class GlobalExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> tratarErraValidacao(
+    public ResponseEntity<Map<String, String>> tratarErroValidacao(
             MethodArgumentNotValidException exception){
 
         Map<String, String> erros = new HashMap<>();
@@ -31,5 +33,17 @@ public class GlobalExecptionHandler {
                 .body(erros);
     }
 
+    @ExceptionHandler(ProdutoNaoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> tratarProdutoNaoEncontrado(
+            ProdutoNaoEncontradoException exception){
+
+        Map<String, String> erro = new HashMap<>();
+
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(erro);
+    }
 
 }
