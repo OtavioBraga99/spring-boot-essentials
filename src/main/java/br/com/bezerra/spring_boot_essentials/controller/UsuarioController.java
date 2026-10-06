@@ -10,6 +10,7 @@ import br.com.bezerra.spring_boot_essentials.service.UsuarioService;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class UsuarioController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioResponseDTO salvar(
-            @Valid @RequestBody UsuarioRequestDTO usuarioDTO){
+            @Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
 
         UsuarioEntity usuario =
                 usuarioMapper.toEntity(usuarioDTO);
@@ -42,7 +43,7 @@ public class UsuarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UsuarioResponseDTO> findAll(){
+    public List<UsuarioResponseDTO> findAll() {
 
         List<UsuarioEntity> usuarios =
                 usuarioService.findAll();
@@ -50,5 +51,52 @@ public class UsuarioController {
         return usuarios.stream()
                 .map(usuarioMapper::toResponseDTO)
                 .toList();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UsuarioResponseDTO> findById(
+            @PathVariable Integer id) {
+
+        UsuarioEntity usuario =
+                usuarioService.findById(id);
+
+        UsuarioResponseDTO response =
+                usuarioMapper.toResponseDTO(usuario);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UsuarioResponseDTO> atualizar(
+            @PathVariable Integer id,
+            @Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
+
+        UsuarioEntity usuarioExistente =
+                usuarioService.findById(id);
+
+        UsuarioEntity novosDados =
+                usuarioMapper.toEntity(usuarioDTO);
+
+        UsuarioEntity usuarioAtualizado =
+                usuarioService.atualizar(
+                        usuarioExistente,
+                        novosDados
+                );
+
+        UsuarioResponseDTO response =
+                usuarioMapper.toResponseDTO(usuarioAtualizado);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(
+            @PathVariable Integer id) {
+
+        usuarioService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

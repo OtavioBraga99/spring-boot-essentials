@@ -1,6 +1,7 @@
 package br.com.bezerra.spring_boot_essentials.handler;
 
 import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoException;
+import br.com.bezerra.spring_boot_essentials.exceptions.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> tratarErroValidacao(
-            MethodArgumentNotValidException exception){
+            MethodArgumentNotValidException exception) {
 
         Map<String, String> erros = new HashMap<>();
 
@@ -35,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProdutoNaoEncontradoException.class)
     public ResponseEntity<Map<String, String>> tratarProdutoNaoEncontrado(
-            ProdutoNaoEncontradoException exception){
+            ProdutoNaoEncontradoException exception) {
 
         Map<String, String> erro = new HashMap<>();
 
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> tratarArgumentoInvalido(
-            IllegalArgumentException exception){
+            IllegalArgumentException exception) {
 
         Map<String, String> erro = new HashMap<>();
 
@@ -58,5 +59,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(erro);
 
+    }
+
+    @ExceptionHandler(UsuarioNaoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> tratarUsuarioNaoEncontrado(
+            UsuarioNaoEncontradoException exception
+    ) {
+        Map<String, String> erro = new HashMap<>();
+
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(erro);
     }
 }
