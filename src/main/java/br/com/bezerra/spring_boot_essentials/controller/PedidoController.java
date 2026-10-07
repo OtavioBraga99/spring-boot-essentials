@@ -1,5 +1,6 @@
 package br.com.bezerra.spring_boot_essentials.controller;
 
+import br.com.bezerra.spring_boot_essentials.database.model.ItemPedidoEntity;
 import br.com.bezerra.spring_boot_essentials.database.model.PedidoEntity;
 import br.com.bezerra.spring_boot_essentials.database.model.ProdutoEntity;
 import br.com.bezerra.spring_boot_essentials.dto.PedidoRequestDTO;
@@ -28,23 +29,35 @@ public class PedidoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PedidoResponseDTO criar(
-            @Valid @RequestBody PedidoRequestDTO pedidoDTO){
+            @Valid @RequestBody PedidoRequestDTO pedidoDTO) {
 
         PedidoEntity pedido =
-                pedidoService.criar(pedidoDTO.getUsuarioId());
+                pedidoService.criar(pedidoDTO);
 
-        return pedidoMapper.toResponseDTO(pedido);
+        List<ItemPedidoEntity> itens =
+                pedidoService.buscarItens(pedido.getId());
+
+        return pedidoMapper.toResponseDTO(pedido, itens);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PedidoResponseDTO> findAll(){
+    public List<PedidoResponseDTO> findAll() {
 
         List<PedidoEntity> pedidos =
                 pedidoService.findAll();
 
         return pedidos.stream()
-                .map(pedidoMapper::toResponseDTO)
+                .map(pedido -> {
+
+                    List<ItemPedidoEntity> itens =
+                            pedidoService.buscarItens(pedido.getId());
+
+                    return pedidoMapper.toResponseDTO(
+                            pedido,
+                            itens
+                    );
+                })
                 .toList();
     }
 }

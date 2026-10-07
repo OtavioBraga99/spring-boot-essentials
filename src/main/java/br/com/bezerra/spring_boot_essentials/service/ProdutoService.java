@@ -29,7 +29,6 @@ public class ProdutoService {
     }
 
     public ProdutoEntity findById(Integer id) {
-
         return produtoRepository.findById(id)
                 .orElseThrow(() ->
                         new ProdutoNaoEncontradoException(id)
