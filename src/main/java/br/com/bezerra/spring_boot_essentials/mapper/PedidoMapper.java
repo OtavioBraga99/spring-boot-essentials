@@ -6,6 +6,7 @@ import br.com.bezerra.spring_boot_essentials.dto.ItemPedidoResponseDTO;
 import br.com.bezerra.spring_boot_essentials.dto.PedidoResponseDTO;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -29,6 +30,12 @@ public class PedidoMapper {
 
         dto.setItens(itensDTO);
 
+        BigDecimal total = itensDTO.stream()
+                .map(ItemPedidoResponseDTO::getSubTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        dto.setTotal(total);
+
         return dto;
     }
 
@@ -42,6 +49,11 @@ public class PedidoMapper {
         dto.setNomeProduto(item.getProduto().getNome());
         dto.setPrecoUnitario(item.getPrecoUnitario());
         dto.setQuantidade(item.getQuantidade());
+
+        BigDecimal subtotal = item.getPrecoUnitario()
+                .multiply(BigDecimal.valueOf(item.getQuantidade()));
+
+        dto.setSubTotal(subtotal);
 
         return dto;
     }

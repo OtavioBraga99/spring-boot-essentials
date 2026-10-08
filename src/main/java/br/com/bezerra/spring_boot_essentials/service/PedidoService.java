@@ -8,6 +8,7 @@ import br.com.bezerra.spring_boot_essentials.database.repository.ItemPedidoRepos
 import br.com.bezerra.spring_boot_essentials.database.repository.PedidoRepository;
 import br.com.bezerra.spring_boot_essentials.dto.ItemPedidoRequestDTO;
 import br.com.bezerra.spring_boot_essentials.dto.PedidoRequestDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class PedidoService {
         this.itemPedidoRepository = itemPedidoRepository;
     }
 
+    @Transactional
     public PedidoEntity criar(PedidoRequestDTO pedidoDTO) {
 
         UsuarioEntity usuario =
@@ -52,6 +54,12 @@ public class PedidoService {
             ProdutoEntity produto =
                     produtoService.findById(itemDTO.getProdutoId());
 
+            if (produto.getQuantidade() < itemDTO.getQuantidade()) {
+                throw new IllegalArgumentException(
+                        "Estoque insuficiente para o produto: " + produto.getNome()
+                );
+            }
+
             ItemPedidoEntity item = new ItemPedidoEntity();
 
             item.setPedido(pedidoSalvo);
@@ -60,17 +68,23 @@ public class PedidoService {
             item.setPrecoUnitario(produto.getPreco());
 
             itemPedidoRepository.save(item);
+
+            produto.setQuantidade(
+                    produto.getQuantidade()
+                        - itemDTO.getQuantidade()
+            );
+
+            produtoService.salvar(produto);
         }
 
         return pedidoSalvo;
-
     }
 
     public List<PedidoEntity> findAll() {
         return pedidoRepository.findAll();
     }
 
-    public List<ItemPedidoEntity> buscarItens(Integer pedidoId){
+    public List<ItemPedidoEntity> buscarItens(Integer pedidoId) {
         return itemPedidoRepository.findByPedidoId(pedidoId);
     }
 }

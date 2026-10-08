@@ -8,6 +8,7 @@ public class ItemPedidoResponseDTO {
     private String nomeProduto;
     private Integer quantidade;
     private BigDecimal precoUnitario;
+    private BigDecimal subTotal;
 
     public Integer getProdutoId() {
         return produtoId;
@@ -39,5 +40,13 @@ public class ItemPedidoResponseDTO {
 
     public void setPrecoUnitario(BigDecimal precoUnitario) {
         this.precoUnitario = precoUnitario;
+    }
+
+    public BigDecimal getSubTotal() {
+        return subTotal;
+    }
+
+    public void setSubTotal(BigDecimal subTotal) {
+        this.subTotal = subTotal;
     }
 }

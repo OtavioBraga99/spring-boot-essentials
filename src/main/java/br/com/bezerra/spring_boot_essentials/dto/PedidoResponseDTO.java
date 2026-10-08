@@ -1,5 +1,6 @@
 package br.com.bezerra.spring_boot_essentials.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class PedidoResponseDTO {
     private Integer usuarioId;
     private String nomeUsuario;
     private List<ItemPedidoResponseDTO> itens;
+    private BigDecimal total;
 
     public Integer getId() {
         return id;
@@ -50,5 +52,13 @@ public class PedidoResponseDTO {
 
     public void setItens(List<ItemPedidoResponseDTO> itens) {
         this.itens = itens;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
     }
 }
