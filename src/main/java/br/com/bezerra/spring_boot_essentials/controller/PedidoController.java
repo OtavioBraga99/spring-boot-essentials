@@ -62,6 +62,39 @@ public class PedidoController {
                 .toList();
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PedidoResponseDTO> buscarPorUsuario(
+            @PathVariable Integer usuarioId) {
+
+        List<PedidoEntity> pedidos =
+                pedidoService.buscarPorUsuario(usuarioId);
+
+        return pedidos.stream()
+                .map(pedido -> {
+
+                    List<ItemPedidoEntity> itens =
+                            pedidoService.buscarItens(pedido.getId());
+
+                    return pedidoMapper.toResponseDTO(pedido, itens);
+                })
+
+                .toList();
+    }
+
+    @GetMapping("/{id}")
+    public PedidoResponseDTO buscarPorId(
+            @PathVariable Integer id){
+
+        PedidoEntity pedido =
+                pedidoService.findById(id);
+
+        List<ItemPedidoEntity> itens =
+                pedidoService.buscarItens(pedido.getId());
+
+        return pedidoMapper.toResponseDTO(pedido, itens);
+    }
+
     @PatchMapping("/{id}/status")
     public PedidoResponseDTO atualizarStatus(
             @PathVariable Integer id,
@@ -77,7 +110,7 @@ public class PedidoController {
     }
 
     @PatchMapping("/{id}/cancelar")
-    public PedidoResponseDTO cancelarPedido(@PathVariable Integer id){
+    public PedidoResponseDTO cancelarPedido(@PathVariable Integer id) {
 
         PedidoEntity pedido = pedidoService.cancelarPedido(id);
 

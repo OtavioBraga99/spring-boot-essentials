@@ -179,4 +179,11 @@ public class PedidoService {
 
         return pedidoRepository.save(pedido);
     }
+
+    public List<PedidoEntity> buscarPorUsuario(Integer usuarioId){
+
+        usuarioService.findById(usuarioId);
+
+        return pedidoRepository.findByUsuarioId(usuarioId);
+    }
 }
