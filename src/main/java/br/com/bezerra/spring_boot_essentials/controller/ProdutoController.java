@@ -8,6 +8,10 @@ import br.com.bezerra.spring_boot_essentials.service.ProdutoService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -92,6 +96,28 @@ public class ProdutoController {
         return produtos.stream()
                 .map(produtoMapper::toResponseDTO)
                 .toList();
+    }
+
+    @GetMapping("/paginados")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ProdutoResponseDTO> listarPaginados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        if (page < 0 || size < 1 || size > 100){
+            throw new IllegalArgumentException(
+                    "Página inválida ou tamanho fora do intervalo de 1 a 100"
+            );
+        }
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("id").ascending()
+        );
+
+        return produtoService.findAllPaginado(pageable)
+                .map(produtoMapper::toResponseDTO);
     }
 
     @PutMapping("/{id}")

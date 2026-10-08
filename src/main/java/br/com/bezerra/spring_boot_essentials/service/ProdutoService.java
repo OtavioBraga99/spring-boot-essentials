@@ -4,6 +4,8 @@ import br.com.bezerra.spring_boot_essentials.database.model.ProdutoEntity;
 import br.com.bezerra.spring_boot_essentials.database.repository.ProdutoRepository;
 import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,6 +28,12 @@ public class ProdutoService {
 
     public List<ProdutoEntity> findAll() {
         return produtoRepository.findAll();
+    }
+
+    public Page<ProdutoEntity> findAllPaginado(
+        Pageable pageable){
+
+        return produtoRepository.findAll(pageable);
     }
 
     public ProdutoEntity findById(Integer id) {
