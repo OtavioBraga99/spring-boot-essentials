@@ -23,6 +23,7 @@ public class PedidoMapper {
         dto.setDataPedido(pedido.getDataPedido());
         dto.setUsuarioId(pedido.getUsuario().getId());
         dto.setNomeUsuario(pedido.getUsuario().getNome());
+        dto.setStatus(pedido.getStatus());
 
         List<ItemPedidoResponseDTO> itensDTO = itens.stream()
                 .map(this::toItemResponseDTO)

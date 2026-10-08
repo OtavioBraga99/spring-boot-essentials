@@ -1,5 +1,7 @@
 package br.com.bezerra.spring_boot_essentials.dto;
 
+import br.com.bezerra.spring_boot_essentials.database.model.enums.StatusPedido;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ public class PedidoResponseDTO {
     private String nomeUsuario;
     private List<ItemPedidoResponseDTO> itens;
     private BigDecimal total;
+    private StatusPedido status;
 
     public Integer getId() {
         return id;
@@ -60,5 +63,13 @@ public class PedidoResponseDTO {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public StatusPedido getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = status;
     }
 }

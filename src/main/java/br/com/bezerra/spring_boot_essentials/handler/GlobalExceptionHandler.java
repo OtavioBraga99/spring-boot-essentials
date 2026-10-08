@@ -1,5 +1,6 @@
 package br.com.bezerra.spring_boot_essentials.handler;
 
+import br.com.bezerra.spring_boot_essentials.exceptions.PedidoNaoEncontradoException;
 import br.com.bezerra.spring_boot_essentials.exceptions.ProdutoNaoEncontradoException;
 import br.com.bezerra.spring_boot_essentials.exceptions.UsuarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
@@ -73,4 +74,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(erro);
     }
+
+    @ExceptionHandler(PedidoNaoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> tratarPedidoNaoEncontrado(
+            PedidoNaoEncontradoException exception) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("erro", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(erro);
+    }
+
 }

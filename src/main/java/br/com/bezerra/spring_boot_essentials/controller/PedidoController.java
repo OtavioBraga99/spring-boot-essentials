@@ -3,6 +3,7 @@ package br.com.bezerra.spring_boot_essentials.controller;
 import br.com.bezerra.spring_boot_essentials.database.model.ItemPedidoEntity;
 import br.com.bezerra.spring_boot_essentials.database.model.PedidoEntity;
 import br.com.bezerra.spring_boot_essentials.database.model.ProdutoEntity;
+import br.com.bezerra.spring_boot_essentials.dto.AtualizarStatusPedidoDTO;
 import br.com.bezerra.spring_boot_essentials.dto.PedidoRequestDTO;
 import br.com.bezerra.spring_boot_essentials.dto.PedidoResponseDTO;
 import br.com.bezerra.spring_boot_essentials.dto.ProdutoResponseDTO;
@@ -59,5 +60,30 @@ public class PedidoController {
                     );
                 })
                 .toList();
+    }
+
+    @PatchMapping("/{id}/status")
+    public PedidoResponseDTO atualizarStatus(
+            @PathVariable Integer id,
+            @Valid @RequestBody AtualizarStatusPedidoDTO dto) {
+
+        PedidoEntity pedido =
+                pedidoService.atualizarStatus(id, dto.getStatus());
+
+        List<ItemPedidoEntity> itens =
+                pedidoService.buscarItens(pedido.getId());
+
+        return pedidoMapper.toResponseDTO(pedido, itens);
+    }
+
+    @PatchMapping("/{id}/cancelar")
+    public PedidoResponseDTO cancelarPedido(@PathVariable Integer id){
+
+        PedidoEntity pedido = pedidoService.cancelarPedido(id);
+
+        List<ItemPedidoEntity> itens =
+                pedidoService.buscarItens(pedido.getId());
+
+        return pedidoMapper.toResponseDTO(pedido, itens);
     }
 }
